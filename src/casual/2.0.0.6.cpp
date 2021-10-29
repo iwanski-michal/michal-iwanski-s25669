@@ -1,6 +1,4 @@
 #include <iostream>
-#include <string>
-#include <cstdlib>
 
 auto main (int argc, char* argv[]) -> int
 {
@@ -24,5 +22,5 @@ auto main (int argc, char* argv[]) -> int
             
     }
     
-	return 0;
+	return 0; //konczymy program
 }
