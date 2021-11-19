@@ -8,62 +8,174 @@ private:
     int h;
     int m;
     int s;
-public:
-    Time(int h, int m, int s){
-        if (h>=24 || m>=60 || s>=60)
-        {
-            std::cout << "Podano zle wartosci \n";
-            //wyrzuc blad i zakoncz dzialanie
-            throw "BLAD";
+    enum TimeOfDay
+    {
+        morning,
+        afternoon,
+        evening,
+        night
+    };
 
-        }else{
-        this->h = h;
-        this->m = m;
-        this->s = s;
+public:
+    Time(int h, int m, int s)
+    {
+        if (h >= 24 || h < 0 || m >= 60 || m < 0 || s >= 60 || s < 0)
+        {
+            throw std::invalid_argument("Podano godzine spoza dopuszczalnego zakresu!");
+        }
+        else
+        {
+            this->h = h;
+            this->m = m;
+            this->s = s;
         }
     };
-    ~Time();
-    auto toString(){
-        if (h < 9){
+    ~Time(){
+
+    };
+    auto toString()
+    {
+        if (h < 9)
+        {
             std::cout << "0" << h << ":";
-        } else{
+        }
+        else
+        {
             std::cout << h << ":";
         }
-        if (m < 9){
+        if (m < 9)
+        {
             std::cout << "0" << m << ":";
-        } else{
+        }
+        else
+        {
             std::cout << m << ":";
-        }        
-        if (s < 9){
-            std::cout << "0" << s << ":";
-        } else{
-            std::cout << s;
+        }
+        if (s < 9)
+        {
+            std::cout << "0" << s << std::endl;
+        }
+        else
+        {
+            std::cout << s << std::endl;
+        }
+    }
+    void nextHour()
+    {
+        if (h == 23)
+        {
+            h = 0;
+        }
+        else
+        {
+            h++;
+        }
+    }
+    void nextMinute()
+    {
+        if (m == 59)
+        {
+            m = 0;
+            nextHour();
+        }
+        else
+        {
+            m++;
+        }
+    }
+    void nextSecond()
+    {
+        if (s == 59)
+        {
+            s = 0;
+            nextMinute();
+        }
+        else
+        {
+            s++;
+        }
+    }
+    TimeOfDay timeOfDay()
+    {
+        if (h >= 6 && h <= 12)
+        {
+            return morning;
+        }
+        else if (h >= 13 && h <= 18)
+        {
+            return afternoon;
+        }
+        else if (h >= 19 && h <= 23)
+        {
+            return evening;
+        }
+        else
+        {
+            return night;
+        }
+    };
+
+    std::string toString(TimeOfDay value){
+        if (value == 0)
+        {
+            return "morning";
+        }else if ( value == 1 ){
+            return "afternoon";
+        }else if ( value == 2 ){
+            return "evening";
+        }
+        else if ( value == 3 ){
+            return "night";
         }
         
-        // std::stringstream output;
-        // output (h < 9)? "0" << h << ":" : h << ":";
+    }
+
+    uint64_t countSeconds(){
+        std::uint64_t secondsSum = 0;
+        secondsSum += s;
+        secondsSum += m * 60;
+        secondsSum += h * 60 * 60;
+        return secondsSum;
+    }
+
+    uint64_t countMinutes(){
+        std::uint64_t minutesSum = 0;
+        minutesSum += m;
+        minutesSum += h * 60;
+        return minutesSum;
+    }
+
+    Time timeToMidnight(){ //TODO!
+        
     }
 };
 
-Time::~Time()
+// Time::~Time()
+// {
+// }
+
+auto main() -> int
 {
-}
 
-auto main()-> int{
-
-try
-{
-    auto nowyCzas = Time(1,1,200);
-    nowyCzas.toString();
-}
-catch(const std::exception& e)
-{
-    std::cerr << e.what() << '\n';
-    return 1;
-}
-
-
-
+    try
+    {
+        auto nowyCzas = Time(23, 59, 59);
+        nowyCzas.toString();
+        nowyCzas.nextSecond();
+        nowyCzas.toString();
+        nowyCzas.nextSecond();
+        nowyCzas.toString();
+        nowyCzas.nextSecond();
+        nowyCzas.toString();
+        nowyCzas.nextSecond();
+        nowyCzas.toString();
+        std::cout << nowyCzas.toString(nowyCzas.timeOfDay()) << std::endl;
+    }
+    catch (const std::invalid_argument &e)
+    {
+        std::cout << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }
